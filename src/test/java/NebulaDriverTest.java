@@ -3,10 +3,9 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-import com.vesoft.nebula.client.graph.NebulaPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
-import com.vesoft.nebula.jdbc.impl.NebulaConnection;
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
+import com.vesoft.nebula.jdbc.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaDriver;
 import org.junit.jupiter.api.Test;
 
 import java.sql.*;
@@ -40,9 +39,7 @@ public class NebulaDriverTest {
         defaultPoolProperties.put("waitTime", 0);
 
         NebulaDriver defaultDriver = new NebulaDriver();
-        Properties properties = defaultDriver.getPoolProperties();
 
-        assertEquals(defaultPoolProperties, properties);
 
         Properties connectionConfig = new Properties();
         connectionConfig.put("user", RunMeBeforeTest.USERNAME);
@@ -57,8 +54,6 @@ public class NebulaDriverTest {
         assertEquals(connection1.getClientInfo(), connection2.getClientInfo());
         assertNotEquals(connection1.getConnectionConfig(), connection2.getConnectionConfig());
         assertEquals(connection1.getConnectionConfig(), connection3.getConnectionConfig());
-
-        defaultDriver.closePool();
     }
 
 
@@ -78,15 +73,7 @@ public class NebulaDriverTest {
         poolProperties.put("intervalIdle", 1256);
         poolProperties.put("waitTime", 1256);
 
-        NebulaDriver customizedDriver = new NebulaDriver(poolProperties);
-        NebulaPoolConfig nebulaPoolConfig = customizedDriver.getNebulaPoolConfig();
-
-        assertEquals(poolProperties.getOrDefault("minConnsSize", 0), nebulaPoolConfig.getMinConnSize());
-        assertEquals(poolProperties.getOrDefault("maxConnsSize", 10), nebulaPoolConfig.getMaxConnSize());
-        assertEquals(poolProperties.getOrDefault("timeout", 0), nebulaPoolConfig.getTimeout());
-        assertEquals(poolProperties.getOrDefault("idleTime", 0), nebulaPoolConfig.getIdleTime());
-        assertEquals(poolProperties.getOrDefault("intervalIdle", 0), nebulaPoolConfig.getIntervalIdle());
-        assertEquals(poolProperties.getOrDefault("waitTime", 0), nebulaPoolConfig.getWaitTime());
+        NebulaDriver customizedDriver = new NebulaDriver();
 
         Properties connectionConfig = new Properties();
         connectionConfig.put("user", RunMeBeforeTest.USERNAME);
@@ -102,26 +89,6 @@ public class NebulaDriverTest {
         assertNotEquals(connection1.getConnectionConfig(), connection2.getConnectionConfig());
         assertEquals(connection1.getConnectionConfig(), connection3.getConnectionConfig());
 
-        customizedDriver.closePool();
     }
-
-
-    @Test
-    public void getCustomizedUrlDriverTest() throws SQLException {
-        NebulaDriver customizedUrlDriver = new NebulaDriver(RunMeBeforeTest.IP + ":" + RunMeBeforeTest.PORT);
-
-        NebulaPoolConfig nebulaPoolConfig = customizedUrlDriver.getNebulaPoolConfig();
-        assertEquals(0, nebulaPoolConfig.getMinConnSize());
-        assertEquals(10, nebulaPoolConfig.getMaxConnSize());
-        assertEquals(0, nebulaPoolConfig.getTimeout());
-        assertEquals(0, nebulaPoolConfig.getIdleTime());
-        assertEquals(-1, nebulaPoolConfig.getIntervalIdle());
-        assertEquals(0, nebulaPoolConfig.getWaitTime());
-
-        DriverManager.deregisterDriver(customizedUrlDriver);
-        customizedUrlDriver.closePool();
-    }
-
-
 
 }

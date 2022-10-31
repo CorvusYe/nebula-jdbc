@@ -3,9 +3,8 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-import com.vesoft.nebula.jdbc.impl.NebulaConnection;
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
-import org.junit.jupiter.api.AfterAll;
+import com.vesoft.nebula.jdbc.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaDriver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -29,13 +28,9 @@ public class NebulaConnectionTest {
 
     @BeforeAll
     public void getDriver() throws SQLException {
-        driver = new NebulaDriver(RunMeBeforeTest.IP + ":" + RunMeBeforeTest.PORT);
+        driver = new NebulaDriver();
     }
 
-    @AfterAll
-    public void closeDriver(){
-        driver.closePool();
-    }
 
     @Test
     public void getDefaultConnectionWithoutAuthenticationTest() throws SQLException {
